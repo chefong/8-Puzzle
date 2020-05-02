@@ -1,24 +1,62 @@
+from helpers import *
 from heapq import *
+from math import sqrt, pow
 from queue import PriorityQueue
 from copy import deepcopy
-from helpers import *
 
 class Node:
   def __init__(self, board, g_n=0):
     self.state = board
     self.g_n = g_n
+    self.heuristic = self.euclideanDistance
 
-  def findEmptyIndex(self):
+  # Counts and returns the number of misplaced tiles using the current state compared to the goal state
+  def countMisplacedTiles(self, goal_state):
+    num_misplaced_tiles = 0
+
     for i in range(len(self.state)):
       for j in range(len(self.state[i])):
-        if self.state[i][j] == 0:
-          return [i, j]
+        current_state_tile = self.state[i][j]
+        goal_state_tile = goal_state[i][j]
+
+        if current_state_tile != goal_state_tile:
+          num_misplaced_tiles += 1
+
+    return num_misplaced_tiles
   
-  # Returns an array of next possible states (Nodes) with the current state
+  # Calculates and returns the sum of Euclidean distances between each current state tile and goal state tile
+  def euclideanDistance(self, goal_state):
+    total_distance = 0
+
+    # Create a mapping between tile number and indices n -> (x, y)
+    current_state_mappings = {}
+    goal_state_mappings = {}
+
+    for i in range(len(self.state)):
+      for j in range(len(self.state[i])):
+        current_state_tile = self.state[i][j]
+        goal_state_tile = goal_state[i][j]
+
+        indices = (i, j)
+        current_state_mappings[current_state_tile] = indices
+        goal_state_mappings[goal_state_tile] = indices
+    
+    for tile, indices in current_state_mappings.items():
+      goal_state_indices = goal_state_mappings[tile]
+
+      x1, y1 = indices
+      x2, y2 = goal_state_indices
+      distance = sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2))
+
+      total_distance += distance
+    
+    return total_distance
+        
+  # Returns a list of next possible Nodes depending on the current state
   def getPossibleStates(self):
     possible_states = []
     next_g_n = self.g_n + 1
-    empty_row_index, empty_col_index = self.findEmptyIndex()
+    empty_row_index, empty_col_index = findEmptyIndices(self.state)
 
     num_rows = len(self.state)
     num_cols = len(self.state[0])
@@ -76,12 +114,8 @@ class Problem:
 
   # Choose which search algorithm to use
   def solve(self):
-    self.uniformCostSearch()
-
-  def printGoalMessage(self, num_nodes):
-    print("Goal!!!\n")
-    print("To solve this problem the search algorithm expanded a total of {} nodes.".format(num_nodes))
-    print("The maximum number of nodes in the queue at any one time: {}.".format(self.max_num_frontier_nodes))
+    # self.uniformCostSearch()
+    self.aStarSearch()
 
   def uniformCostSearch(self):
     current_node = Node(self.initial_state)
@@ -92,43 +126,110 @@ class Problem:
     print()
 
     if current_node.state == self.goal_state:
-      self.printGoalMessage(num_nodes)
+      printGoalMessage(num_nodes, self.max_num_frontier_nodes)
       return
 
     # 'num_nodes' is also used as the alternate comparator for Python's PriorityQueue class
-    self.frontier.put((current_node.g_n, num_nodes, current_node))
+    element = (current_node.g_n, num_nodes, current_node)
+    self.frontier.put(element)
 
-    tupled_state = tupifyBoard(current_node.state)
+    tupled_state = tupifyState(current_node.state)
     self.explored_set.add(tupled_state)
 
     while not self.frontier.empty():
+      # Check and update if we've had the largest number of nodes in the frontier
       self.max_num_frontier_nodes = max(self.max_num_frontier_nodes, self.frontier.qsize())
 
       top = self.frontier.get()
-      current_node_g_n = top[0]
       current_node = top[2]
 
-      tupled_state = tupifyBoard(current_node.state)
+      # Convert our board state to a tuple in order to add it to the explored set
+      # (2D lists are not hashable)
+      tupled_state = tupifyState(current_node.state)
       self.explored_set.add(tupled_state)
       
-      print("The best state to expand with g(n) = {} is...".format(current_node_g_n))
+      print("The best state to expand with g(n) = {} is...".format(current_node.g_n))
       current_node.printState()
       print("Expanding this node...\n")
 
       possible_states = current_node.getPossibleStates()
       for node in possible_states:
         num_nodes += 1
-        tupled_state = tupifyBoard(node.state)
+        tupled_state = tupifyState(node.state)
 
         # If one of our possible next states is our goal state, we can stop!
         if node.state == self.goal_state:
-          self.printGoalMessage(num_nodes)
+          printGoalMessage(num_nodes, self.max_num_frontier_nodes)
           return
 
+        # Add to the frontier if we haven't seen this state yet
         if tupled_state not in self.explored_set:
-          self.frontier.put((node.g_n, num_nodes, node))
+          element = (node.g_n, num_nodes, node)
+          self.frontier.put(element)
+
+  # f(n) = g(n) + h(n)
+  def aStarSearch(self):
+    current_node = Node(self.initial_state)
+    num_nodes = 1
+    
+    print("Expanding state")
+    current_node.printState()
+    print()
+
+    if current_node.state == self.goal_state:
+      printGoalMessage(num_nodes, self.max_num_frontier_nodes)
+      return
+    
+    # Calculate our f(n) = g(n) + h(n)
+    h_n = current_node.heuristic(self.goal_state)
+    f_n = current_node.g_n + h_n
+
+    element = (f_n, num_nodes, current_node)
+    self.frontier.put(element)
+
+    tupled_state = tupifyState(current_node.state)
+    self.explored_set.add(tupled_state)
+
+    while not self.frontier.empty():
+      # Check and update if we've had the largest number of nodes in the frontier
+      self.max_num_frontier_nodes = max(self.max_num_frontier_nodes, self.frontier.qsize())
+
+      top = self.frontier.get()
+      current_h_n = top[0]
+      current_node = top[2]
+
+      tupled_state = tupifyState(current_node.state)
+      self.explored_set.add(tupled_state)
+
+      print("The best state to expand with g(n) = {} and h(n) = {} is...".format(current_node.g_n, current_h_n))
+      current_node.printState()
+      print("Expanding this node...\n")
+
+      possible_states = current_node.getPossibleStates()
+      for node in possible_states:
+        num_nodes += 1
+
+        # If one of our possible next states is our goal state, we can stop!
+        if node.state == self.goal_state:
+          printGoalMessage(num_nodes, self.max_num_frontier_nodes)
+          return
+
+        # Convert node's state to tuple to check if it was previously explored
+        tupled_state = tupifyState(node.state)
+
+        # Add to the frontier if we haven't seen this state yet
+        if tupled_state not in self.explored_set:
+          h_n = node.heuristic(self.goal_state)
+          f_n = node.g_n + h_n
+
+          element = (f_n, num_nodes, node)
+          self.frontier.put(element)
       
-given_board = [[1, 2, 0], [4, 5, 3], [7, 8, 6]]
+given_board = [
+  [1, 2, 3],
+  [4, 8, 0],
+  [7, 6, 5]
+]
 
 goal_state = [
   [1,2,3],
