@@ -22,6 +22,7 @@ def euclideanDistance(current_state, goal_state):
   current_state_mappings = {}
   goal_state_mappings = {}
 
+  # Iterate through entire board and store a map between the tile number and indices
   for i in range(len(current_state)):
     for j in range(len(current_state[i])):
       current_state_tile = current_state[i][j]
@@ -31,6 +32,7 @@ def euclideanDistance(current_state, goal_state):
       current_state_mappings[current_state_tile] = indices
       goal_state_mappings[goal_state_tile] = indices
   
+  # Iterate through mappings and calculate the Euclidean distance between the current state index pair and goal state index pair
   for tile, indices in current_state_mappings.items():
     goal_state_indices = goal_state_mappings[tile]
 

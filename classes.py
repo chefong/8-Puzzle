@@ -12,8 +12,11 @@ class Node:
   def getPossibleStates(self):
     possible_states = []
     next_g_n = self.g_n + 1
+
+    # Find out where the indices for the blank space is located in the board
     empty_row_index, empty_col_index = findEmptyIndices(self.state)
 
+    # Get row and column lengths to determine boundary
     num_rows = len(self.state)
     num_cols = len(self.state[0])
 
@@ -88,6 +91,7 @@ class Problem:
     printState(current_node.state)
     print()
 
+    # If our initial state is actually our goal state, we're done
     if current_node.state == self.goal_state:
       printGoalMessage(num_nodes, self.max_num_frontier_nodes)
       return
@@ -96,13 +100,17 @@ class Problem:
     element = (current_node.g_n, num_nodes, current_node)
     self.frontier.put(element)
 
+    # Convert the initial state to a tuple so we can add it to the explored set
     tupled_state = tupifyState(current_node.state)
     self.explored_set.add(tupled_state)
 
+    # Continue searching while our frontier is not empty
     while not self.frontier.empty():
+
       # Check and update if we've had the largest number of nodes in the frontier
       self.max_num_frontier_nodes = max(self.max_num_frontier_nodes, self.frontier.qsize())
 
+      # Dequeue from the frontier and extract the Node from the tuple
       top = self.frontier.get()
       current_node = top[2]
 
@@ -115,7 +123,9 @@ class Problem:
       printState(current_node.state)
       print("Expanding this node...\n")
 
+      # Find all the possible next states we can move to given our current state
       possible_states = current_node.getPossibleStates()
+
       for node in possible_states:
         num_nodes += 1
         tupled_state = tupifyState(node.state)
@@ -139,6 +149,7 @@ class Problem:
     printState(current_node.state)
     print()
 
+    # If our initial state is actually our goal state, we're done
     if current_node.state == self.goal_state:
       printGoalMessage(num_nodes, self.max_num_frontier_nodes)
       return
@@ -147,20 +158,26 @@ class Problem:
     h_n = heuristic(current_node.state, self.goal_state)
     f_n = current_node.g_n + h_n
 
+    # Use f_n as the primary comparator for the frontier PriorityQueue
     element = (f_n, num_nodes, current_node)
     self.frontier.put(element)
 
+    # Convert the initial state to a hashable tuple to add to the explored set
     tupled_state = tupifyState(current_node.state)
     self.explored_set.add(tupled_state)
 
+    # Continue looping while the frontier is not empty
     while not self.frontier.empty():
+
       # Check and update if we've had the largest number of nodes in the frontier
       self.max_num_frontier_nodes = max(self.max_num_frontier_nodes, self.frontier.qsize())
 
+      # Dequeue and extract the h(n) value and the Node
       top = self.frontier.get()
       current_h_n = top[0]
       current_node = top[2]
 
+      # Add our new current node to the explored set
       tupled_state = tupifyState(current_node.state)
       self.explored_set.add(tupled_state)
 
@@ -168,7 +185,9 @@ class Problem:
       printState(current_node.state)
       print("Expanding this node...\n")
 
+      # Find all the possible states to move to with our current state
       possible_states = current_node.getPossibleStates()
+      
       for node in possible_states:
         num_nodes += 1
 

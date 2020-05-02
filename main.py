@@ -2,6 +2,7 @@ from defaultPuzzles import *
 from helpers import printState
 from classes import Problem
 
+# Prompt user to select puzzle difficulty and return the corresponding puzzle
 def defaultPuzzle():
   print("Choose one of the default puzzles below.")
 
@@ -31,6 +32,7 @@ def defaultPuzzle():
   elif initial_state_selection == '4':
     return hard_puzzle
 
+# Prompt user to enter values for each puzzle row
 def customPuzzle():
   print("Enter your puzzle, use a zero to represent the blank space.")
 
@@ -44,6 +46,7 @@ def customPuzzle():
 
   return [first_row_tiles, second_row_tiles, third_row_tiles]
 
+# Prompt user to select which search algorithm to perform
 def chooseSearchAlgorithm():
   search_algorithm_message = "Enter your choice of algorithm.\n"
   uniform_cost_message = "(1) Uniform Cost Search\n"
