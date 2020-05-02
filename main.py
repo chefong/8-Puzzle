@@ -78,20 +78,25 @@ class Problem:
   def solve(self):
     self.uniformCostSearch()
 
+  def printGoalMessage(self, num_nodes):
+    print("Goal!!!\n")
+    print("To solve this problem the search algorithm expanded a total of {} nodes.".format(num_nodes))
+    print("The maximum number of nodes in the queue at any one time: {}.".format(self.max_num_frontier_nodes))
+
   def uniformCostSearch(self):
-    count = 0
     current_node = Node(self.initial_state)
+    num_nodes = 1
     
     print("Expanding state")
     current_node.printState()
     print()
 
     if current_node.state == self.goal_state:
-      print("Goal!!!")
+      self.printGoalMessage(num_nodes)
       return
 
-    # 'count' is used as the alternate comparator for Python's PriorityQueue class
-    self.frontier.put((current_node.g_n, count, current_node))
+    # 'num_nodes' is also used as the alternate comparator for Python's PriorityQueue class
+    self.frontier.put((current_node.g_n, num_nodes, current_node))
 
     tupled_state = tupifyBoard(current_node.state)
     self.explored_set.add(tupled_state)
@@ -112,22 +117,18 @@ class Problem:
 
       possible_states = current_node.getPossibleStates()
       for node in possible_states:
-        count += 1
+        num_nodes += 1
         tupled_state = tupifyBoard(node.state)
 
         # If one of our possible next states is our goal state, we can stop!
         if node.state == self.goal_state:
-          print("Goal!!!")
+          self.printGoalMessage(num_nodes)
           return
 
         if tupled_state not in self.explored_set:
-          self.frontier.put((node.g_n, count, node))
+          self.frontier.put((node.g_n, num_nodes, node))
       
-given_board = [
-  [8, 7, 1],
-  [6, 0, 2],
-  [5, 4, 3]
-]
+given_board = [[1, 2, 0], [4, 5, 3], [7, 8, 6]]
 
 goal_state = [
   [1,2,3],
