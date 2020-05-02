@@ -86,6 +86,7 @@ class Problem:
   def uniformCostSearch(self):
     current_node = Node(self.initial_state)
     num_nodes = 1
+    count = 1
     
     print("Expanding state")
     printState(current_node.state)
@@ -96,8 +97,8 @@ class Problem:
       printGoalMessage(num_nodes, self.max_num_frontier_nodes)
       return
 
-    # 'num_nodes' is also used as the alternate comparator for Python's PriorityQueue class
-    element = (current_node.g_n, num_nodes, current_node)
+    # 'count' is also used as the alternate comparator for Python's PriorityQueue class
+    element = (current_node.g_n, count, current_node)
     self.frontier.put(element)
 
     # Convert the initial state to a tuple so we can add it to the explored set
@@ -119,6 +120,10 @@ class Problem:
       tupled_state = tupifyState(current_node.state)
       self.explored_set.add(tupled_state)
       
+      if current_node.state == self.goal_state:
+        printGoalMessage(num_nodes, self.max_num_frontier_nodes)
+        return
+
       print("The best state to expand with g(n) = {} is...".format(current_node.g_n))
       printState(current_node.state)
       print("Expanding this node...\n")
@@ -127,23 +132,22 @@ class Problem:
       possible_states = current_node.getPossibleStates()
 
       for node in possible_states:
-        num_nodes += 1
+        count += 1
         tupled_state = tupifyState(node.state)
-
-        # If one of our possible next states is our goal state, we can stop!
-        if node.state == self.goal_state:
-          printGoalMessage(num_nodes, self.max_num_frontier_nodes)
-          return
 
         # Add to the frontier if we haven't seen this state yet
         if tupled_state not in self.explored_set:
-          element = (node.g_n, num_nodes, node)
+          element = (node.g_n, count, node)
           self.frontier.put(element)
+      
+      # Increment the number of nodes we've expanded
+      num_nodes += 1
 
   # f(n) = g(n) + h(n)
   def aStarSearch(self, heuristic):
     current_node = Node(self.initial_state)
-    num_nodes = 1
+    num_nodes_expanded = 0
+    count = 1
     
     print("Expanding state")
     printState(current_node.state)
@@ -151,7 +155,7 @@ class Problem:
 
     # If our initial state is actually our goal state, we're done
     if current_node.state == self.goal_state:
-      printGoalMessage(num_nodes, self.max_num_frontier_nodes)
+      printGoalMessage(num_nodes_expanded, self.max_num_frontier_nodes)
       return
     
     # Calculate our f(n) = g(n) + h(n)
@@ -159,7 +163,7 @@ class Problem:
     f_n = current_node.g_n + h_n
 
     # Use f_n as the primary comparator for the frontier PriorityQueue
-    element = (f_n, num_nodes, current_node)
+    element = (f_n, count, current_node)
     self.frontier.put(element)
 
     # Convert the initial state to a hashable tuple to add to the explored set
@@ -174,12 +178,17 @@ class Problem:
 
       # Dequeue and extract the h(n) value and the Node
       top = self.frontier.get()
-      current_h_n = top[0]
+      current_f_n = top[0]
       current_node = top[2]
+      current_h_n = current_f_n - current_node.g_n
 
       # Add our new current node to the explored set
       tupled_state = tupifyState(current_node.state)
       self.explored_set.add(tupled_state)
+
+      if current_node.state == self.goal_state:
+        printGoalMessage(num_nodes_expanded, self.max_num_frontier_nodes)
+        return
 
       print("The best state to expand with g(n) = {} and h(n) = {} is...".format(current_node.g_n, current_h_n))
       printState(current_node.state)
@@ -187,14 +196,9 @@ class Problem:
 
       # Find all the possible states to move to with our current state
       possible_states = current_node.getPossibleStates()
-      
-      for node in possible_states:
-        num_nodes += 1
 
-        # If one of our possible next states is our goal state, we can stop!
-        if node.state == self.goal_state:
-          printGoalMessage(num_nodes, self.max_num_frontier_nodes)
-          return
+      for node in possible_states:
+        count += 1
 
         # Convert node's state to tuple to check if it was previously explored
         tupled_state = tupifyState(node.state)
@@ -204,5 +208,8 @@ class Problem:
           h_n = heuristic(node.state, self.goal_state)
           f_n = node.g_n + h_n
 
-          element = (f_n, num_nodes, node)
+          element = (f_n, count, node)
           self.frontier.put(element)
+      
+      # Increment the number of nodes we've expanded
+      num_nodes_expanded += 1
