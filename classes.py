@@ -1,5 +1,5 @@
 from helpers import *
-from heuristics import *
+from heuristics import countMisplacedTiles, euclideanDistance
 from queue import PriorityQueue
 from copy import deepcopy
 
@@ -76,13 +76,13 @@ class Problem:
 
   # Choose which search algorithm to use
   def solve(self, search_type):
-    if search_type == "uniform cost":
+    if search_type == "1":
       print("Searching with uniform cost...\n")
       self.uniformCostSearch()
-    elif search_type == "a* misplaced tile":
+    elif search_type == "2":
       print("Searching with A* misplaced tile...\n")
       self.aStarSearch(countMisplacedTiles)
-    elif search_type == "a* euclidean distance":
+    elif search_type == "3":
       print("Searching with A* Euclidean distance...\n")
       self.aStarSearch(euclideanDistance)
 

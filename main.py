@@ -32,9 +32,4 @@ if __name__ == '__main__':
   a_star_euclidean_message = "(3) A* with the Euclidean distance heuristic\n"
 
   search_algorithm_selection = input(search_algorithm_message + uniform_cost_message + a_star_misplaced_tile_message + a_star_euclidean_message)
-  if search_algorithm_selection == '1':
-    problem.solve("uniform cost")
-  elif search_algorithm_selection == '2':
-    problem.solve("a* misplaced tile")
-  elif search_algorithm_selection == '3':
-    problem.solve("a* euclidean distance")
+  problem.solve(search_algorithm_selection)
