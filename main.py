@@ -1,5 +1,6 @@
-from queue import PriorityQueue
+from heapq import *
 from copy import deepcopy
+from helpers import *
 
 class Node:
   def __init__(self, board, g_n=0):
@@ -67,7 +68,8 @@ class Problem:
   def __init__(self, initial_state, goal_state):
     self.initial_state = initial_state
     self.goal_state = goal_state
-    self.frontier = PriorityQueue()
+    self.frontier = []
+    self.explored_set = set()
     self.nodes_expanded = 0
     self.max_num_frontier_nodes = 0
 
@@ -76,32 +78,55 @@ class Problem:
     self.uniformCostSearch()
 
   def uniformCostSearch(self):
-    node = Node(self.initial_state)
+    count = 0
+    current_node = Node(self.initial_state)
     
     print("Expanding state")
-    node.printState()
-    print()
+    current_node.printState()
+    print('\n')
 
-    self.frontier.put((node.g_n, node))
+    triple = (current_node.g_n, count, current_node)
+    heappush(self.frontier, triple)
 
-    while not self.frontier.empty():
-      node_g_n, node = self.frontier.get()
-      
+    tupled_state = tupifyBoard(current_node.state)
+    self.explored_set.add(tupled_state)
+
+    while len(self.frontier) > 0:
+      self.max_num_frontier_nodes = max(self.max_num_frontier_nodes, len(self.frontier))
+
+      top = heappop(self.frontier)
+      current_node_g_n = top[0]
+      current_node = top[2]
+
       # Stop and print results once we've found our goal state
-      if node.state == self.goal_state:
-        print("Goal!!!")
-        return
+      # if current_node.state == self.goal_state:
+      #   print("Goal!!!")
+      #   return
+
+      tupled_state = tupifyBoard(current_node.state)
+      self.explored_set.add(tupled_state)
       
-      print("The best state to expand with g(n) = {} is...".format(node.g_n))
-      node.printState()
+      print("The best state to expand with g(n) = {} is...".format(current_node_g_n))
+      current_node.printState()
       print("Expanding this node...\n")
 
-      possible_states = node.getPossibleStates()
+      possible_states = current_node.getPossibleStates()
+      for node in possible_states:
+        count += 1
+        tupled_state = tupifyBoard(node.state)
+
+        if node.state == self.goal_state:
+          print("Goal!!!")
+          return
+
+        if tupled_state not in self.explored_set:
+          triple = (node.g_n, count, node)
+          heappush(self.frontier, triple)
       
 given_board = [
-  [4,0,2],
-  [8,1,3],
-  [5,7,6]
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 0, 8]
 ]
 
 goal_state = [
