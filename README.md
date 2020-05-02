@@ -15,3 +15,5 @@ The driver code is located in `main.py`, so the program can be executed by doing
 ```
 python3 main.py
 ```
+
+Afterwards, you will be prompted in the command line to either select a default puzzle or enter your own puzzle, and select which type of search algorithm to perform.

@@ -1,4 +1,58 @@
+from defaultPuzzles import *
+from helpers import printState
 from classes import Problem
+
+def defaultPuzzle():
+  print("Choose one of the default puzzles below.")
+
+  print("(1) Solved")
+  printState(solved_puzzle)
+  print()
+
+  print("(2) Easy")
+  printState(easy_puzzle)
+  print()
+
+  print("(3) Medium")
+  printState(medium_puzzle)
+  print()
+
+  print("(4) Hard")
+  printState(hard_puzzle)
+  print()
+
+  initial_state_selection = input("Enter your selection: ")
+  if initial_state_selection == '1':
+    return solved_puzzle
+  elif initial_state_selection == '2':
+    return easy_puzzle
+  elif initial_state_selection == '3':
+    return medium_puzzle
+  elif initial_state_selection == '4':
+    return hard_puzzle
+
+def customPuzzle():
+  print("Enter your puzzle, use a zero to represent the blank space.")
+
+  first_row = input("Enter the first row, use space or tabs between numbers: ")
+  second_row = input("Enter the second row, use space or tabs between numbers: ")
+  third_row = input("Enter the third row, use space or tabs between numbers: ")
+
+  first_row_tiles = first_row.split()
+  second_row_tiles = second_row.split()
+  third_row_tiles = third_row.split()
+
+  return [first_row_tiles, second_row_tiles, third_row_tiles]
+
+def chooseSearchAlgorithm():
+  search_algorithm_message = "Enter your choice of algorithm.\n"
+  uniform_cost_message = "(1) Uniform Cost Search\n"
+  a_star_misplaced_tile_message = "(2) A* with the Misplaced Tile heuristic\n"
+  a_star_euclidean_message = "(3) A* with the Euclidean distance heuristic\n"
+
+  search_algorithm_selection = input(search_algorithm_message + uniform_cost_message + a_star_misplaced_tile_message + a_star_euclidean_message)
+
+  return search_algorithm_selection
 
 if __name__ == '__main__':
   initial_state = []
@@ -9,27 +63,15 @@ if __name__ == '__main__':
 
   puzzle_selection = input(welcome_message + choose_puzzle_message)
   if puzzle_selection == '1':
-    pass
+    initial_state = defaultPuzzle()
   elif puzzle_selection == '2':
-    print("Enter your puzzle, use a zero to represent the blank space.")
-
-    first_row = input("Enter the first row, use space or tabs between numbers: ")
-    second_row = input("Enter the second row, use space or tabs between numbers: ")
-    third_row = input("Enter the third row, use space or tabs between numbers: ")
-
-    first_row_tiles = first_row.split()
-    second_row_tiles = second_row.split()
-    third_row_tiles = third_row.split()
-
-    initial_state = [first_row_tiles, second_row_tiles, third_row_tiles]
+    initial_state = customPuzzle()
   
   # Create an instance of Problem using the user selected initial state
   problem = Problem(initial_state)
   
-  search_algorithm_message = "Enter your choice of algorithm.\n"
-  uniform_cost_message = "(1) Uniform Cost Search\n"
-  a_star_misplaced_tile_message = "(2) A* with the Misplaced Tile heuristic\n"
-  a_star_euclidean_message = "(3) A* with the Euclidean distance heuristic\n"
+  # Prompt which search algorithm to perfom
+  search_algorithm_selection = chooseSearchAlgorithm()
 
-  search_algorithm_selection = input(search_algorithm_message + uniform_cost_message + a_star_misplaced_tile_message + a_star_euclidean_message)
+  # Solve the puzzle!
   problem.solve(search_algorithm_selection)

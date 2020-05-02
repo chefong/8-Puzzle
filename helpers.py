@@ -1,3 +1,10 @@
+# Prints the board state in a nice format
+def printState(board):
+  for row in board:
+    for tile in row:
+      print(tile, end=" ")
+    print()
+
 # Locates and returns a pair of (row, col) indices where the blank space is found
 def findEmptyIndices(board):
   for i in range(len(board)):

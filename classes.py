@@ -55,12 +55,6 @@ class Node:
 
     return possible_states
 
-  def printState(self):
-    for row in self.state:
-      for tile in row:
-        print(tile, end=" ")
-      print()
-
 class Problem:
   def __init__(self, initial_state):
     self.initial_state = initial_state
@@ -91,7 +85,7 @@ class Problem:
     num_nodes = 1
     
     print("Expanding state")
-    current_node.printState()
+    printState(current_node.state)
     print()
 
     if current_node.state == self.goal_state:
@@ -118,7 +112,7 @@ class Problem:
       self.explored_set.add(tupled_state)
       
       print("The best state to expand with g(n) = {} is...".format(current_node.g_n))
-      current_node.printState()
+      printState(current_node.state)
       print("Expanding this node...\n")
 
       possible_states = current_node.getPossibleStates()
@@ -142,7 +136,7 @@ class Problem:
     num_nodes = 1
     
     print("Expanding state")
-    current_node.printState()
+    printState(current_node.state)
     print()
 
     if current_node.state == self.goal_state:
@@ -171,7 +165,7 @@ class Problem:
       self.explored_set.add(tupled_state)
 
       print("The best state to expand with g(n) = {} and h(n) = {} is...".format(current_node.g_n, current_h_n))
-      current_node.printState()
+      printState(current_node.state)
       print("Expanding this node...\n")
 
       possible_states = current_node.getPossibleStates()
