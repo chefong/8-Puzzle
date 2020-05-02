@@ -1,4 +1,5 @@
 from heapq import *
+from queue import PriorityQueue
 from copy import deepcopy
 from helpers import *
 
@@ -68,7 +69,7 @@ class Problem:
   def __init__(self, initial_state, goal_state):
     self.initial_state = initial_state
     self.goal_state = goal_state
-    self.frontier = []
+    self.frontier = PriorityQueue()
     self.explored_set = set()
     self.nodes_expanded = 0
     self.max_num_frontier_nodes = 0
@@ -83,25 +84,24 @@ class Problem:
     
     print("Expanding state")
     current_node.printState()
-    print('\n')
+    print()
 
-    triple = (current_node.g_n, count, current_node)
-    heappush(self.frontier, triple)
+    if current_node.state == self.goal_state:
+      print("Goal!!!")
+      return
+
+    # 'count' is used as the alternate comparator for Python's PriorityQueue class
+    self.frontier.put((current_node.g_n, count, current_node))
 
     tupled_state = tupifyBoard(current_node.state)
     self.explored_set.add(tupled_state)
 
-    while len(self.frontier) > 0:
-      self.max_num_frontier_nodes = max(self.max_num_frontier_nodes, len(self.frontier))
+    while not self.frontier.empty():
+      self.max_num_frontier_nodes = max(self.max_num_frontier_nodes, self.frontier.qsize())
 
-      top = heappop(self.frontier)
+      top = self.frontier.get()
       current_node_g_n = top[0]
       current_node = top[2]
-
-      # Stop and print results once we've found our goal state
-      # if current_node.state == self.goal_state:
-      #   print("Goal!!!")
-      #   return
 
       tupled_state = tupifyBoard(current_node.state)
       self.explored_set.add(tupled_state)
@@ -115,18 +115,18 @@ class Problem:
         count += 1
         tupled_state = tupifyBoard(node.state)
 
+        # If one of our possible next states is our goal state, we can stop!
         if node.state == self.goal_state:
           print("Goal!!!")
           return
 
         if tupled_state not in self.explored_set:
-          triple = (node.g_n, count, node)
-          heappush(self.frontier, triple)
+          self.frontier.put((node.g_n, count, node))
       
 given_board = [
-  [1, 2, 3],
-  [4, 5, 6],
-  [7, 0, 8]
+  [8, 7, 1],
+  [6, 0, 2],
+  [5, 4, 3]
 ]
 
 goal_state = [
