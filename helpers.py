@@ -20,4 +20,4 @@ def tupifyState(board):
 def printGoalMessage(num_nodes, max_num_frontier_nodes):
     print("Goal!!!\n")
     print("To solve this problem the search algorithm expanded a total of {} nodes.".format(num_nodes))
-    print("The maximum number of nodes in the queue at any one time: {}.".format(max_num_frontier_nodes))
+    print("The maximum number of nodes in the queue at any one time: {}.\n".format(max_num_frontier_nodes))

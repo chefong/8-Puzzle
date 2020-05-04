@@ -1,6 +1,7 @@
 from defaultPuzzles import *
 from helpers import printState
 from classes import Problem
+from time import time
 
 # Prompt user to select puzzle difficulty and return the corresponding puzzle
 def defaultPuzzle():
@@ -22,6 +23,10 @@ def defaultPuzzle():
   printState(hard_puzzle)
   print()
 
+  print("(5) Oh Boy")
+  printState(oh_boy_puzzle)
+  print()
+
   initial_state_selection = input("Enter your selection: ")
   if initial_state_selection == '1':
     return solved_puzzle
@@ -31,6 +36,8 @@ def defaultPuzzle():
     return medium_puzzle
   elif initial_state_selection == '4':
     return hard_puzzle
+  elif initial_state_selection == '5':
+    return oh_boy_puzzle
 
 # Prompt user to enter values for each puzzle row
 def customPuzzle():
@@ -77,4 +84,10 @@ if __name__ == '__main__':
   search_algorithm_selection = chooseSearchAlgorithm()
 
   # Solve the puzzle!
+  start_time = time()
   problem.solve(search_algorithm_selection)
+  end_time = time()
+
+  # Print how long it took to solve
+  elapsed_time = end_time - start_time
+  print("Program completed in {} seconds.".format(elapsed_time))

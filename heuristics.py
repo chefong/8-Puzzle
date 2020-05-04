@@ -11,8 +11,9 @@ def countMisplacedTiles(current_state, goal_state):
 
       if current_state_tile != goal_state_tile:
         num_misplaced_tiles += 1
-
-  return num_misplaced_tiles
+    
+  # Subtract 1 to ignore the blank space being counted
+  return num_misplaced_tiles - 1
 
 # Calculates and returns the sum of Euclidean distances between each current state tile and goal state tile
 def euclideanDistance(current_state, goal_state):
@@ -31,6 +32,9 @@ def euclideanDistance(current_state, goal_state):
       indices = (i, j)
       current_state_mappings[current_state_tile] = indices
       goal_state_mappings[goal_state_tile] = indices
+  
+  # Calculate Euclidean distances for non-empty spaces
+  del current_state_mappings['0']
   
   # Iterate through mappings and calculate the Euclidean distance between the current state index pair and goal state index pair
   for tile, indices in current_state_mappings.items():

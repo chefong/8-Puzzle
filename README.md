@@ -3,7 +3,7 @@
 The 8-Puzzle is a problem consisting of sliding tiles one-by-one either **up**, **down**, **left**, or **right** to reach the final goal state shown below.
 
 <p align="center">
-  <img width="30%"src="goalStateExample.png">
+  <img width="30%"src="imgs/goal_state.png">
 </p>
 
 The **red** tile above can be swapped with any one of its neighboring tiles, **not** including its diagonal neighbors. Each swap counts as a move, and the result of a swap creates a new state if it was not seen before.
