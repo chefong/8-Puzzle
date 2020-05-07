@@ -116,7 +116,7 @@ Program completed in 0.00220489501953125 seconds.
 When running the program, you're given the option to select 3 different options to search by, described below.
 
 ### Uniform Cost Search
-This search method prioritizes nodes with the cheapest total path cost (depth) and expand them.
+This search method prioritizes nodes with the cheapest total path cost (depth) and expands them.
 
 ### A* Search with Misplaced Tiles Heuristic
 A* search also takes into account how close a given state is to the goal state, measured by the heuristic function. The heuristic here is counting the total number of misplaced tiles by comparing a given state to the goal state. Less misplaced tiles means the state is closer to the goal.
