@@ -66,11 +66,32 @@ class Problem:
     self.explored_set = set()
     self.nodes_expanded = 0
     self.max_num_frontier_nodes = 0
+    self.solution_path = []
     self.goal_state = [
       ['1','2','3'],
       ['4','5','6'],
       ['7','8','0']
     ]
+  
+  # Trace back and store solution using the parent nodes
+  def findSolutionPath(self, node):
+    states = []
+
+    while node.parent != None:
+      states.append(node.state)
+      node = node.parent
+    
+    # Reverse list to print in order
+    states = states[::-1]
+
+    self.solution_path = states
+  
+  # Prints solution path, state by state
+  def printSolutionPath(self):
+    print("Solution path is...\n")
+    for state in self.solution_path:
+      printState(state)
+      print()
 
   # Choose which search algorithm to use
   def solve(self, search_type):
@@ -123,7 +144,7 @@ class Problem:
       
       if current_node.state == self.goal_state:
         printGoalMessage(num_nodes, self.max_num_frontier_nodes)
-        printSolution(current_node)
+        self.findSolutionPath(current_node)
         return
 
       print("The best state to expand with g(n) = {} is...".format(current_node.g_n))
@@ -194,7 +215,7 @@ class Problem:
 
       if current_node.state == self.goal_state:
         printGoalMessage(num_nodes_expanded, self.max_num_frontier_nodes)
-        printSolution(current_node)
+        self.findSolutionPath(current_node)
         return
 
       print("The best state to expand with g(n) = {} and h(n) = {} is...".format(current_node.g_n, current_h_n))

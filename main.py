@@ -86,6 +86,9 @@ if __name__ == '__main__':
   problem.solve(search_algorithm_selection)
   end_time = time()
 
+  # Print solution
+  problem.printSolutionPath()
+
   # Print how long it took to solve
   elapsed_time = end_time - start_time
   print("Program completed in {} seconds.".format(elapsed_time))
