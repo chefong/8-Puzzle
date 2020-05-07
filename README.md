@@ -19,7 +19,9 @@ python3 main.py
 Afterwards, you will be prompted in the command line to either select a default puzzle or enter your own puzzle, and select which type of search algorithm to perform.
 
 ## Output
-A sample output of the program is shown below, for when the user chooses to select a *Default Puzzle*, the *Medium* level puzzle, and *A\* search with the Euclidean distance heuristic*
+A sample output of the program is shown below, for when the user chooses to select a *Default Puzzle*, the *Medium* level puzzle, and *A\* search with the Euclidean distance heuristic*.
+
+*Note: some parts of the output are hidden with "..."*.
 ```
 Type "1" to use a default puzzle, or "2" to enter your own puzzle.
 1
@@ -109,7 +111,6 @@ Solution path is...
 
 Program completed in 0.00220489501953125 seconds.
 ```
-*Note: some parts of the output are hidden with "..."*.
 
 ## Search Algorithms
 When running the program, you're given the option to select 3 different options to search by, described below.
