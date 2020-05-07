@@ -21,3 +21,19 @@ def printGoalMessage(num_nodes, max_num_frontier_nodes):
     print("Goal!!!\n")
     print("To solve this problem the search algorithm expanded a total of {} nodes.".format(num_nodes))
     print("The maximum number of nodes in the queue at any one time: {}.\n".format(max_num_frontier_nodes))
+
+# Trace back and print solution path
+def printSolution(node):
+  states = []
+
+  while node.parent != None:
+    states.append(node.state)
+    node = node.parent
+  
+  # Reverse list to print in order
+  states = states[::-1]
+
+  print("Solution path is...\n")
+  for node_state in states:
+    printState(node_state)
+    print()

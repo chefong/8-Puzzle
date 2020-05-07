@@ -7,6 +7,7 @@ class Node:
   def __init__(self, board, g_n=0):
     self.state = board
     self.g_n = g_n
+    self.parent = None
         
   # Returns a list of next possible Nodes depending on the current state
   def getPossibleStates(self):
@@ -122,6 +123,7 @@ class Problem:
       
       if current_node.state == self.goal_state:
         printGoalMessage(num_nodes, self.max_num_frontier_nodes)
+        printSolution(current_node)
         return
 
       print("The best state to expand with g(n) = {} is...".format(current_node.g_n))
@@ -137,6 +139,10 @@ class Problem:
 
         # Add to the frontier if we haven't seen this state yet
         if tupled_state not in self.explored_set:
+          
+          # Assign the parent node
+          node.parent = current_node
+
           element = (node.g_n, count, node)
           self.frontier.put(element)
       
@@ -188,6 +194,7 @@ class Problem:
 
       if current_node.state == self.goal_state:
         printGoalMessage(num_nodes_expanded, self.max_num_frontier_nodes)
+        printSolution(current_node)
         return
 
       print("The best state to expand with g(n) = {} and h(n) = {} is...".format(current_node.g_n, current_h_n))
@@ -207,6 +214,9 @@ class Problem:
         if tupled_state not in self.explored_set:
           h_n = heuristic(node.state, self.goal_state)
           f_n = node.g_n + h_n
+          
+          # Assign the parent before we push into the frontier
+          node.parent = current_node
 
           element = (f_n, count, node)
           self.frontier.put(element)
