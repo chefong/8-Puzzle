@@ -67,11 +67,9 @@ def chooseSearchAlgorithm():
 if __name__ == '__main__':
   initial_state = []
 
-  student_id = "861267345"
-  welcome_message = "Welcome to {} 8 puzzle solver.\n".format(student_id)
   choose_puzzle_message = "Type \"1\" to use a default puzzle, or \"2\" to enter your own puzzle.\n"
 
-  puzzle_selection = input(welcome_message + choose_puzzle_message)
+  puzzle_selection = input(choose_puzzle_message)
   if puzzle_selection == '1':
     initial_state = defaultPuzzle()
   elif puzzle_selection == '2':
